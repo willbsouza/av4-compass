@@ -7,8 +7,8 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.compass.av4.controller.dto.AssociacaoPartidoDTO;
-import com.compass.av4.controller.dto.AssociadoDTO;
+import com.compass.av4.controller.dto.AssociacaoDTO;
+import com.compass.av4.controller.dto.AssociadoComPartidoDTO;
 import com.compass.av4.entity.Associado;
 import com.compass.av4.entity.Partido;
 import com.compass.av4.entity.enums.CargoPolitico;
@@ -39,35 +39,31 @@ public class AssociadoService {
 				.orElseThrow(() -> new EntityNotFoundException("ID " + id + " não encontrado."));
 	}
 
-	public Associado save(@Valid AssociadoDTO associadoDTO) {
+	public Associado save(@Valid Associado associado) {
 		try {
-			Associado associado = new Associado();
-			associado.setNome(associadoDTO.getNome());
-			associado.setCargoPolitico(associadoDTO.getCargoPolitico());
-			associado.setDataDeNascimento(associadoDTO.getDataDeNascimento());
-			associado.setSexo(associadoDTO.getSexo());
 			return associadoRepository.save(associado);
 		} catch (MethodArgumentNotValidException e) {
 			throw new MethodArgumentNotValidException(e.getMessage());
 		}
 	}
 	
-	public Associado associarPartido(@Valid AssociacaoPartidoDTO associacaoPartidoDTO) {
-		Partido partido = partidoRepository.findById(associacaoPartidoDTO.getIdPartido())
-				.orElseThrow(() -> new EntityNotFoundException("Partido com ID " + associacaoPartidoDTO.getIdPartido() + " não encontrado."));
-		Associado associado = associadoRepository.findById(associacaoPartidoDTO.getIdAssociado())
-				.orElseThrow(() -> new EntityNotFoundException("Associado com ID " + associacaoPartidoDTO.getIdAssociado() + " não encontrado."));
+	public AssociadoComPartidoDTO associarPartido(@Valid AssociacaoDTO associacaoDTO) {
+		Partido partido = partidoRepository.findById(associacaoDTO.getIdPartido())
+				.orElseThrow(() -> new EntityNotFoundException("Partido com ID " + associacaoDTO.getIdPartido() + " não encontrado."));
+		Associado associado = associadoRepository.findById(associacaoDTO.getIdAssociado())
+				.orElseThrow(() -> new EntityNotFoundException("Associado com ID " + associacaoDTO.getIdAssociado() + " não encontrado."));
 		partido.addAssociado(associado);
-		return associado;
+		
+		return new AssociadoComPartidoDTO(associado, partido);
 	}
 
-	public Associado updateById(Integer id, @Valid AssociadoDTO associadoDTO) {
+	public Associado updateById(Integer id, @Valid Associado associado) {
 		Associado associadoParaAtualizar = findById(id);
 		try {
-			associadoParaAtualizar.setNome(associadoDTO.getNome());
-			associadoParaAtualizar.setCargoPolitico(associadoDTO.getCargoPolitico());
-			associadoParaAtualizar.setDataDeNascimento(associadoDTO.getDataDeNascimento());
-			associadoParaAtualizar.setSexo(associadoDTO.getSexo());
+			associadoParaAtualizar.setNome(associado.getNome());
+			associadoParaAtualizar.setCargoPolitico(associado.getCargoPolitico());
+			associadoParaAtualizar.setDataDeNascimento(associado.getDataDeNascimento());
+			associadoParaAtualizar.setSexo(associado.getSexo());
 			return associadoParaAtualizar;
 		} catch (MethodArgumentNotValidException e) {
 			throw new MethodArgumentNotValidException(e.getMessage());

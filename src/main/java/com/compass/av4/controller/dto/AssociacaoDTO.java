@@ -2,7 +2,7 @@ package com.compass.av4.controller.dto;
 
 import javax.validation.constraints.NotNull;
 
-public class AssociacaoPartidoDTO {
+public class AssociacaoDTO {
 	
 	@NotNull
 	private Integer idAssociado;

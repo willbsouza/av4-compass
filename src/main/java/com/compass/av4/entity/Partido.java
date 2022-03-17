@@ -15,6 +15,7 @@ import javax.persistence.OneToMany;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import com.compass.av4.controller.dto.PartidoDTO;
 import com.compass.av4.entity.enums.Ideologia;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -39,6 +40,16 @@ public class Partido {
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Associado> associados = new ArrayList<Associado>();
 	
+	public Partido() {}
+	
+	public Partido(PartidoDTO partidoDTO) {
+		this.id = partidoDTO.getId();
+		this.nomeDoPartido = partidoDTO.getNomeDoPartido();
+		this.sigla = partidoDTO.getSigla();
+		this.ideologia = partidoDTO.getIdeologia();
+		this.dataDeFundacao = partidoDTO.getDataDeFundacao();
+	}
+
 	public Integer getId() {
 		return id;
 	}
@@ -78,5 +89,9 @@ public class Partido {
 	
 	public boolean procurarAssociado(Associado associado) {
 		return associados.contains(associado);
+	}
+	
+	public PartidoDTO converter(Partido partido) {
+		return new PartidoDTO(partido);
 	}
 }

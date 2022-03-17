@@ -39,17 +39,6 @@ public class Associado {
 	@Enumerated(EnumType.STRING)
 	private Sexo sexo;
 	
-	public Associado() {}
-	
-	public AssociadoComPartidoDTO converter(Associado associado, Partido partido) {
-		AssociadoComPartidoDTO associadoComPartido = new AssociadoComPartidoDTO();
-		associadoComPartido.setId(associado.getId());
-		associadoComPartido.setNome(associado.getNome());
-		associadoComPartido.setCargoPolitico(associado.getCargoPolitico());
-		associadoComPartido.setNomePartido(partido.getNomeDoPartido());
-		return associadoComPartido;
-	}
-
 	public Integer getId() {
 		return id;
 	}
@@ -76,5 +65,9 @@ public class Associado {
 	}
 	public void setSexo(Sexo sexo) {
 		this.sexo = sexo;
+	}
+	
+	public AssociadoComPartidoDTO converter(Associado associado, Partido partido) {
+		return new AssociadoComPartidoDTO(associado, partido);
 	}
 }

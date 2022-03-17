@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.compass.av4.controller.dto.AssociadoComPartidoDTO;
-import com.compass.av4.entity.Partido;
+import com.compass.av4.controller.dto.PartidoDTO;
 import com.compass.av4.entity.enums.Ideologia;
 import com.compass.av4.service.PartidoService;
 
@@ -31,7 +31,7 @@ public class PartidoController {
 	private PartidoService partidoService;
 	
 	@GetMapping
-	public ResponseEntity<List<Partido>> findAllOrByIdeologia(Ideologia ideologia) {
+	public ResponseEntity<List<PartidoDTO>> findAllOrByIdeologia(Ideologia ideologia) {
 		if(ideologia != null) {
 			return ResponseEntity.ok(partidoService.findByIdeologia(ideologia));
 		}
@@ -39,7 +39,7 @@ public class PartidoController {
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<Partido> findById(@PathVariable Integer id){
+	public ResponseEntity<PartidoDTO> findById(@PathVariable Integer id){
 		return ResponseEntity.ok(partidoService.findById(id));
 	}
 	
@@ -50,15 +50,15 @@ public class PartidoController {
 	
 	@PostMapping
 	@Transactional
-	public ResponseEntity<Partido> save(@RequestBody @Valid Partido partido, UriComponentsBuilder uriBuilder){
-		URI uri = uriBuilder.path("/partidos/{id}").buildAndExpand(partido.getId()).toUri();
-		return ResponseEntity.created(uri).body(partidoService.save(partido));
+	public ResponseEntity<PartidoDTO> save(@RequestBody @Valid PartidoDTO partidoDTO, UriComponentsBuilder uriBuilder){
+		URI uri = uriBuilder.path("/partidos/{id}").buildAndExpand(partidoDTO.getId()).toUri();
+		return ResponseEntity.created(uri).body(partidoService.save(partidoDTO));
 	}
 	
 	@PutMapping("/{id}")
 	@Transactional
-	public ResponseEntity<Partido> updateById(@PathVariable Integer id, @RequestBody @Valid Partido partido){
-		return ResponseEntity.ok(partidoService.updateById(id, partido));
+	public ResponseEntity<PartidoDTO> updateById(@PathVariable Integer id, @RequestBody @Valid PartidoDTO partidoDTO){
+		return ResponseEntity.ok(partidoService.updateById(id, partidoDTO));
 	}
 	
 	@DeleteMapping("/{id}")

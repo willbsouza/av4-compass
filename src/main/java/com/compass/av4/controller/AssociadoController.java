@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.compass.av4.controller.dto.AssociacaoPartidoDTO;
-import com.compass.av4.controller.dto.AssociadoDTO;
+import com.compass.av4.controller.dto.AssociacaoDTO;
+import com.compass.av4.controller.dto.AssociadoComPartidoDTO;
 import com.compass.av4.entity.Associado;
 import com.compass.av4.entity.enums.CargoPolitico;
 import com.compass.av4.service.AssociadoService;
@@ -46,22 +46,22 @@ public class AssociadoController {
 	
 	@PostMapping
 	@Transactional
-	public ResponseEntity<Associado> save(@RequestBody @Valid AssociadoDTO associadoDTO, UriComponentsBuilder uriBuilder){
-		URI uri = uriBuilder.path("/associados/{id}").buildAndExpand(associadoDTO.getId()).toUri();
-		return ResponseEntity.created(uri).body(associadoService.save(associadoDTO));
+	public ResponseEntity<Associado> save(@RequestBody @Valid Associado associado, UriComponentsBuilder uriBuilder){
+		URI uri = uriBuilder.path("/associados/{id}").buildAndExpand(associado.getId()).toUri();
+		return ResponseEntity.created(uri).body(associadoService.save(associado));
 	}
 	
 	@PostMapping("/partidos")
 	@Transactional
-	public ResponseEntity<Associado> associarPartido(@RequestBody @Valid AssociacaoPartidoDTO associacaoPartidoDTO, UriComponentsBuilder uriBuilder){
-		URI uri = uriBuilder.path("/associados/{id}").buildAndExpand(associacaoPartidoDTO.getIdAssociado()).toUri();
-		return ResponseEntity.created(uri).body(associadoService.associarPartido(associacaoPartidoDTO));
+	public ResponseEntity<AssociadoComPartidoDTO> associarPartido(@RequestBody @Valid AssociacaoDTO associacaoDTO, UriComponentsBuilder uriBuilder){
+		URI uri = uriBuilder.path("/associados/{id}").buildAndExpand(associacaoDTO.getIdAssociado()).toUri();
+		return ResponseEntity.created(uri).body(associadoService.associarPartido(associacaoDTO));
 	}
 	
 	@PutMapping("/{id}")
 	@Transactional
-	public ResponseEntity<Associado> updateById(@PathVariable Integer id, @RequestBody @Valid AssociadoDTO associadoDTO){
-		return ResponseEntity.ok(associadoService.updateById(id, associadoDTO));
+	public ResponseEntity<Associado> updateById(@PathVariable Integer id, @RequestBody @Valid Associado associado){
+		return ResponseEntity.ok(associadoService.updateById(id, associado));
 	}
 	
 	@DeleteMapping("/{id}")

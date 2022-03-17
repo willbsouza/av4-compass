@@ -5,6 +5,8 @@ import javax.persistence.Enumerated;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import com.compass.av4.entity.Associado;
+import com.compass.av4.entity.Partido;
 import com.compass.av4.entity.enums.CargoPolitico;
 
 public class AssociadoComPartidoDTO {
@@ -17,6 +19,15 @@ public class AssociadoComPartidoDTO {
 	private CargoPolitico cargoPolitico;
 	@NotNull @NotEmpty
 	private String nomePartido;
+	
+	public AssociadoComPartidoDTO() {}
+	
+	public AssociadoComPartidoDTO(Associado associado, Partido partido) {
+		this.setId(associado.getId());
+		this.setNome(associado.getNome());
+		this.setCargoPolitico(associado.getCargoPolitico());
+		this.setNomePartido(partido.getNomeDoPartido());
+	}
 	
 	public Integer getId() {
 		return id;

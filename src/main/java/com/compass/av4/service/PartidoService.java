@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.compass.av4.controller.dto.AssociadoComPartidoDTO;
+import com.compass.av4.controller.dto.PartidoDTO;
 import com.compass.av4.entity.Associado;
 import com.compass.av4.entity.Partido;
 import com.compass.av4.entity.enums.Ideologia;
@@ -21,46 +22,49 @@ public class PartidoService {
 
 	@Autowired
 	private PartidoRepository partidoRepository;
-	
-	public List<Partido> findByIdeologia(Ideologia ideologia) {
+
+	public List<PartidoDTO> findByIdeologia(Ideologia ideologia) {
 		return partidoRepository.findByIdeologia(ideologia);
 	}
-	
+
+	public List<PartidoDTO> findAll() {
+		List<Partido> partidos = partidoRepository.findAll();
+		List<PartidoDTO> partidosDTO = partidos.stream().map(a -> a.converter(a)).collect(Collectors.toList());
+		return partidosDTO;
+	}
+
 	public List<AssociadoComPartidoDTO> findByPartidoAssociados(Integer id) {
-		Partido partido = findById(id);
+		Partido partido = findByPartido(id);
 		List<Associado> associados = partido.getAssociados();
-		List<AssociadoComPartidoDTO> associadosDTO = associados
-				.stream().map(a -> a.converter(a, partido))
+		List<AssociadoComPartidoDTO> associadosDTO = associados.stream().map(a -> a.converter(a, partido))
 				.collect(Collectors.toList());
 		return associadosDTO;
 	}
-	
-	public List<Partido> findAll() {
-		return partidoRepository.findAll();
+
+	public PartidoDTO findById(Integer id) {
+		Partido partido = findByPartido(id);
+		return new PartidoDTO(partido);
 	}
 
-	public Partido findById(Integer id) {
-		return partidoRepository.findById(id)
-				.orElseThrow(() -> new EntityNotFoundException("ID " + id + " não encontrado."));
-	}
-
-	public Partido save(@Valid Partido partido) {
+	public PartidoDTO save(@Valid PartidoDTO partidoDTO) {
+		Partido partido = new Partido(partidoDTO);
 		try {
-			return partidoRepository.save(partido);			
-		}catch (MethodArgumentNotValidException e) {
+			partidoRepository.save(partido);
+			return new PartidoDTO(partido);
+		} catch (MethodArgumentNotValidException e) {
 			throw new MethodArgumentNotValidException(e.getMessage());
 		}
 	}
 
-	public Partido updateById(Integer id, @Valid Partido partido) {
-		Partido partidoParaAtualizar = findById(id);
+	public PartidoDTO updateById(Integer id, @Valid PartidoDTO partidoDTO) {
+		Partido partidoParaAtualizar = findByPartido(id);
 		try {
-			partidoParaAtualizar.setNomeDoPartido(partido.getNomeDoPartido());
-			partidoParaAtualizar.setSigla(partido.getSigla());
-			partidoParaAtualizar.setIdeologia(partido.getIdeologia());
-			partidoParaAtualizar.setDataDeFundacao(partido.getDataDeFundacao());
-			return partidoParaAtualizar;			
-		}catch (MethodArgumentNotValidException e) {
+			partidoParaAtualizar.setNomeDoPartido(partidoDTO.getNomeDoPartido());
+			partidoParaAtualizar.setSigla(partidoDTO.getSigla());
+			partidoParaAtualizar.setIdeologia(partidoDTO.getIdeologia());
+			partidoParaAtualizar.setDataDeFundacao(partidoDTO.getDataDeFundacao());
+			return new PartidoDTO(partidoParaAtualizar);
+		} catch (MethodArgumentNotValidException e) {
 			throw new MethodArgumentNotValidException(e.getMessage());
 		}
 	}
@@ -68,5 +72,11 @@ public class PartidoService {
 	public void deleteById(Integer id) {
 		findById(id);
 		partidoRepository.deleteById(id);
+	}
+	
+	private Partido findByPartido(Integer id) {
+		Partido partido = partidoRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("ID " + id + " não encontrado."));
+		return partido;
 	}
 }
