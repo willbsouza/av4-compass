@@ -26,8 +26,6 @@ public class AssociadoDTO {
 	
 	@NotNull @Enumerated(EnumType.STRING)
 	private Sexo sexo;
-	
-	private Integer idPartido;
 
 	public Integer getId() {
 		return id;
@@ -65,11 +63,11 @@ public class AssociadoDTO {
 		this.sexo = sexo;
 	}
 
-	public Integer getIdPartido() {
-		return idPartido;
-	}
-
-	public void setIdPartido(Integer idPartido) {
-		this.idPartido = idPartido;
-	}
+//	public Integer getIdPartido() {
+//		return idPartido;
+//	}
+//
+//	public void setIdPartido(Integer idPartido) {
+//		this.idPartido = idPartido;
+//	}
 }

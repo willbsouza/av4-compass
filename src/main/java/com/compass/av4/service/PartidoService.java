@@ -1,12 +1,15 @@
 package com.compass.av4.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.compass.av4.controller.dto.AssociadoComPartidoDTO;
+import com.compass.av4.entity.Associado;
 import com.compass.av4.entity.Partido;
 import com.compass.av4.entity.enums.Ideologia;
 import com.compass.av4.repository.PartidoRepository;
@@ -23,13 +26,22 @@ public class PartidoService {
 		return partidoRepository.findByIdeologia(ideologia);
 	}
 	
+	public List<AssociadoComPartidoDTO> findByPartidoAssociados(Integer id) {
+		Partido partido = findById(id);
+		List<Associado> associados = partido.getAssociados();
+		List<AssociadoComPartidoDTO> associadosDTO = associados
+				.stream().map(a -> a.converter(a, partido))
+				.collect(Collectors.toList());
+		return associadosDTO;
+	}
+	
 	public List<Partido> findAll() {
 		return partidoRepository.findAll();
 	}
 
 	public Partido findById(Integer id) {
 		return partidoRepository.findById(id)
-				.orElseThrow(() -> new EntityNotFoundException("ID " + id + " não encontrado "));
+				.orElseThrow(() -> new EntityNotFoundException("ID " + id + " não encontrado."));
 	}
 
 	public Partido save(@Valid Partido partido) {

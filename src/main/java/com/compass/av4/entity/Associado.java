@@ -8,11 +8,10 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import com.compass.av4.controller.dto.AssociadoComPartidoDTO;
 import com.compass.av4.entity.enums.CargoPolitico;
 import com.compass.av4.entity.enums.Sexo;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -40,9 +39,16 @@ public class Associado {
 	@Enumerated(EnumType.STRING)
 	private Sexo sexo;
 	
-	@ManyToOne(optional = true)
-	@JoinColumn(name = "idPartido", nullable = true)
-	private Partido partido;
+	public Associado() {}
+	
+	public AssociadoComPartidoDTO converter(Associado associado, Partido partido) {
+		AssociadoComPartidoDTO associadoComPartido = new AssociadoComPartidoDTO();
+		associadoComPartido.setId(associado.getId());
+		associadoComPartido.setNome(associado.getNome());
+		associadoComPartido.setCargoPolitico(associado.getCargoPolitico());
+		associadoComPartido.setNomePartido(partido.getNomeDoPartido());
+		return associadoComPartido;
+	}
 
 	public Integer getId() {
 		return id;
@@ -70,11 +76,5 @@ public class Associado {
 	}
 	public void setSexo(Sexo sexo) {
 		this.sexo = sexo;
-	}
-	public Partido getPartido() {
-		return partido;
-	}
-	public void setPartido(Partido partido) {
-		this.partido = partido;
 	}
 }

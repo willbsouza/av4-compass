@@ -1,8 +1,10 @@
 package com.compass.av4.entity;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -15,34 +17,27 @@ import javax.validation.constraints.NotNull;
 
 import com.compass.av4.entity.enums.Ideologia;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Partido {
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
-	@NotEmpty
-	@NotNull
+	@NotEmpty @NotNull
 	private String nomeDoPartido;
 	
-	@NotEmpty
-	@NotNull
+	@NotEmpty @NotNull
 	private String sigla;
 	
-	@NotNull
-	@Enumerated(EnumType.STRING)
+	@NotNull @Enumerated(EnumType.STRING)
 	private Ideologia ideologia;
 	
-	@NotNull
-	@JsonFormat(pattern = "dd/MM/yyyy")
+	@NotNull @JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate dataDeFundacao;
 	
-	@OneToMany(mappedBy = "partido")
-	@JsonIgnore
-	private List<Associado> associados;
+	@OneToMany(cascade = CascadeType.ALL)
+	private List<Associado> associados = new ArrayList<Associado>();
 	
 	public Integer getId() {
 		return id;
@@ -74,7 +69,14 @@ public class Partido {
 	public List<Associado> getAssociados() {
 		return associados;
 	}
-	public void setAssociados(List<Associado> associados) {
-		this.associados = associados;
+	public void addAssociado(Associado associado) {
+		associados.add(associado);
+	}
+	public void removeAssociado(Associado associado) {
+		associados.remove(associado);
+	}
+	
+	public boolean procurarAssociado(Associado associado) {
+		return associados.contains(associado);
 	}
 }

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.compass.av4.controller.dto.AssociacaoPartidoDTO;
 import com.compass.av4.controller.dto.AssociadoDTO;
 import com.compass.av4.entity.Associado;
 import com.compass.av4.entity.enums.CargoPolitico;
@@ -50,6 +51,13 @@ public class AssociadoController {
 		return ResponseEntity.created(uri).body(associadoService.save(associadoDTO));
 	}
 	
+	@PostMapping("/partidos")
+	@Transactional
+	public ResponseEntity<Associado> associarPartido(@RequestBody @Valid AssociacaoPartidoDTO associacaoPartidoDTO, UriComponentsBuilder uriBuilder){
+		URI uri = uriBuilder.path("/associados/{id}").buildAndExpand(associacaoPartidoDTO.getIdAssociado()).toUri();
+		return ResponseEntity.created(uri).body(associadoService.associarPartido(associacaoPartidoDTO));
+	}
+	
 	@PutMapping("/{id}")
 	@Transactional
 	public ResponseEntity<Associado> updateById(@PathVariable Integer id, @RequestBody @Valid AssociadoDTO associadoDTO){
@@ -60,6 +68,13 @@ public class AssociadoController {
 	@Transactional
 	public ResponseEntity<?> deleteById(@PathVariable Integer id){
 		associadoService.deleteById(id);
+		return ResponseEntity.noContent().build();
+	}
+	
+	@DeleteMapping("/{idAssociado}/partidos/{idPartido}")
+	@Transactional
+	public ResponseEntity<?> deletarAssociacao(@PathVariable Integer idAssociado, @PathVariable Integer idPartido){
+		associadoService.deletarAssociacao(idAssociado, idPartido);
 		return ResponseEntity.noContent().build();
 	}
 }

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.compass.av4.controller.dto.AssociadoComPartidoDTO;
 import com.compass.av4.entity.Partido;
 import com.compass.av4.entity.enums.Ideologia;
 import com.compass.av4.service.PartidoService;
@@ -40,6 +41,11 @@ public class PartidoController {
 	@GetMapping("/{id}")
 	public ResponseEntity<Partido> findById(@PathVariable Integer id){
 		return ResponseEntity.ok(partidoService.findById(id));
+	}
+	
+	@GetMapping("/{id}/associados")
+	public ResponseEntity<List<AssociadoComPartidoDTO>> findByPartidoAssociados(@PathVariable Integer id){
+		return ResponseEntity.ok(partidoService.findByPartidoAssociados(id));
 	}
 	
 	@PostMapping

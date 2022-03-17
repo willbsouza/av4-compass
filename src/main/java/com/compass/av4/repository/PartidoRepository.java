@@ -12,5 +12,4 @@ import com.compass.av4.entity.enums.Ideologia;
 public interface PartidoRepository extends JpaRepository<Partido, Integer>{
 
 	List<Partido> findByIdeologia(Ideologia ideologia);
-
 }
