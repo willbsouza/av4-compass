@@ -14,6 +14,7 @@ import com.compass.av4.entity.Associado;
 import com.compass.av4.entity.Partido;
 import com.compass.av4.entity.enums.Ideologia;
 import com.compass.av4.repository.PartidoRepository;
+import com.compass.av4.service.exception.DeletePartidoException;
 import com.compass.av4.service.exception.EntityNotFoundException;
 import com.compass.av4.service.exception.MethodArgumentNotValidException;
 
@@ -70,8 +71,12 @@ public class PartidoService {
 	}
 
 	public void deleteById(Integer id) {
-		findById(id);
-		partidoRepository.deleteById(id);
+		List<Associado> associados = findByPartido(id).getAssociados();
+		if(associados.isEmpty()) {
+			partidoRepository.deleteById(id);
+		} else {
+			throw new DeletePartidoException("Partido contém associados. Para excluir o partido é necessário desvincular os associados primeiro.");
+		}
 	}
 	
 	private Partido findByPartido(Integer id) {
