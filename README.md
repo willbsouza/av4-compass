@@ -14,7 +14,7 @@
 <li>sigla : String</li>
 <li>ideologia : Enum</li>
 <li>dataDeFundacao : LocalDate</li>
-<li>associados : List<Associado> - @OneToMany</li>
+<li>associados : List< Associado > - @OneToMany</li>
 </ul>
 
 #### Entidade Associado:
