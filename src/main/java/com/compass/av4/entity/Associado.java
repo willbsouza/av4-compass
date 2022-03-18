@@ -39,6 +39,10 @@ public class Associado {
 	@Enumerated(EnumType.STRING)
 	private Sexo sexo;
 	
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	
 	public Integer getId() {
 		return id;
 	}

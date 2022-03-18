@@ -16,11 +16,14 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.compass.av4.controller.dto.AssociadoComPartidoDTO;
 import com.compass.av4.controller.dto.PartidoDTO;
 import com.compass.av4.entity.Partido;
+import com.compass.av4.entity.enums.CargoPolitico;
 import com.compass.av4.entity.enums.Ideologia;
 import com.compass.av4.repository.PartidoRepository;
 import com.compass.av4.service.exception.EntityNotFoundException;
+import com.compass.av4.service.exception.MethodArgumentNotValidException;
 
 
 @SpringBootTest
@@ -40,16 +43,50 @@ public class PartidoServiceTest{
 	
 	private Optional<Partido> optionalPartido;
 	
+	@Mock
+	private AssociadoComPartidoDTO associadoDTO;
+	
 	@BeforeEach
 	void setUp() {
 		MockitoAnnotations.openMocks(this);
 		startPartido();
 		startPartidoDTO();
 		startOptionalPartido();
+		startAssociadoDTO();
+	}
+
+	@Test
+	void deveriaRetornarUmaListaDePartidoAoPassarIdeologia() {
+		Mockito.when(repository.findByIdeologia(Mockito.any())).thenReturn(List.of(partidoDTO));
+		
+		List<PartidoDTO> response = service.findByIdeologia(Ideologia.ESQUERDA);
+		
+		assertNotNull(response);
+		assertEquals(1, response.size());
+		assertEquals(PartidoDTO.class, response.get(0).getClass());
+		assertEquals(1, response.get(0).getId());
+		assertEquals("NomeTeste", response.get(0).getNomeDoPartido());
+		assertEquals("NT", response.get(0).getSigla());
+		assertEquals(Ideologia.ESQUERDA, response.get(0).getIdeologia());
 	}
 	
 	@Test
-	void deveriaRetornarUmPartido() {
+	void deveriaRetornarUmaListaDePartidoFindAll() {
+		Mockito.when(repository.findAll()).thenReturn(List.of(partido));
+		
+		List<PartidoDTO> response = service.findAll();
+		
+		assertNotNull(response);
+		assertEquals(1, response.size());
+		assertEquals(PartidoDTO.class, response.get(0).getClass());
+		assertEquals(1, response.get(0).getId());
+		assertEquals("NomeTeste", response.get(0).getNomeDoPartido());
+		assertEquals("NT", response.get(0).getSigla());
+		assertEquals(Ideologia.ESQUERDA, response.get(0).getIdeologia());
+	}
+	
+	@Test
+	void deveriaRetornarUmPartidoFindById() {
 		Mockito.when(repository.findById(Mockito.anyInt())).thenReturn(optionalPartido);
 		
 		PartidoDTO response = service.findById(partido.getId());
@@ -69,43 +106,27 @@ public class PartidoServiceTest{
 		
 		try {
 			service.findById(1);
-		} catch(Exception e) {
+		} catch(EntityNotFoundException e) {
 			assertEquals(EntityNotFoundException.class, e.getClass());
 			assertEquals("ID não encontrado.", e.getMessage());
 		}
 	}
 	
 	@Test
-	void deveriaRetornarUmaListaDePartido() {
-		Mockito.when(repository.findAll()).thenReturn(List.of(partido));
+	void deveriaRetornarMethodArgumentNotValidException() {
+		Mockito.when(repository.findById(Mockito.any()))
+		.thenThrow(new MethodArgumentNotValidException("Dados inválidos."));
 		
-		List<PartidoDTO> response = service.findAll();
-		
-		assertNotNull(response);
-		assertEquals(1, response.size());
-		assertEquals(PartidoDTO.class, response.get(0).getClass());
-		assertEquals(1, response.get(0).getId());
-		assertEquals("NomeTeste", response.get(0).getNomeDoPartido());
-		assertEquals("NT", response.get(0).getSigla());
-		assertEquals(Ideologia.ESQUERDA, response.get(0).getIdeologia());
+		try {
+			service.updateById(1, partidoDTO);
+		} catch(MethodArgumentNotValidException e) {
+			assertEquals(MethodArgumentNotValidException.class, e.getClass());
+			assertEquals("Dados inválidos.", e.getMessage());
+		}
 	}
 	
 	@Test
 	void deveriaCriarUmNovoPartido() {
-		Mockito.when(repository.save(Mockito.any())).thenReturn(partido);
-		
-		PartidoDTO response = service.save(partidoDTO);
-		
-		assertNotNull(response);
-		assertEquals(PartidoDTO.class, response.getClass());
-		assertEquals(1, response.getId());
-		assertEquals("NomeTeste", response.getNomeDoPartido());
-		assertEquals("NT", response.getSigla());
-		assertEquals(Ideologia.ESQUERDA, response.getIdeologia());
-	}
-	
-	@Test
-	void deveriaRetornarUmNovoPartido() {
 		Mockito.when(repository.save(Mockito.any())).thenReturn(partido);
 		
 		PartidoDTO response = service.save(partidoDTO);
@@ -165,6 +186,14 @@ public class PartidoServiceTest{
 		partido.setDataDeFundacao(LocalDate.now());
 		partido.setIdeologia(Ideologia.ESQUERDA);
 		optionalPartido = Optional.of(partido);
+	}
+	
+	private void startAssociadoDTO() {
+		associadoDTO = new AssociadoComPartidoDTO();
+		associadoDTO.setId(1);
+		associadoDTO.setNome("NomeTeste");
+		associadoDTO.setCargoPolitico(CargoPolitico.PRESIDENTE);
+		associadoDTO.setNomePartido("NomeTeste");
 	}
 }
 	
