@@ -30,7 +30,7 @@ public class AssociadoController {
 
 	@Autowired
 	private AssociadoService associadoService;
-	
+
 	@GetMapping
 	public ResponseEntity<List<Associado>> findAllOrByCargoPolitico(CargoPolitico cargo) {
 		if(cargo != null) {
