@@ -36,5 +36,5 @@ public class ResourceExceptionHandler {
 		erro.setMessage("Campo incorreto: " + e.getFieldError().getField().toUpperCase());
 		erro.setPath(request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
-	}	
+	}
 }
